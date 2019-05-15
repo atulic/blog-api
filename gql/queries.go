@@ -6,6 +6,7 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+// Root struct holds a pointer to our graphQL object
 type Root struct {
 	Query *graphql.Object
 }
