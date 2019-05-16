@@ -9,30 +9,52 @@ import (
 // Root struct holds a pointer to our graphQL object
 type Root struct {
 	Query *graphql.Object
+	Mutation *graphql.Object
 }
 
 // NewRoot returns base query type. This is where we add all the base queries
 func NewRoot(db *postgres.Db) *Root {
 	resolver := Resolver{db: db}
 
-	root := Root{
-		Query: graphql.NewObject(
-			graphql.ObjectConfig{
-				Name: "Query",
-				Fields: graphql.Fields{
-					"posts": &graphql.Field{
-						// Slice of User type which can be found in types.go
-						Type: graphql.NewList(Post),
-						Args: graphql.FieldConfigArgument{
-							"id": &graphql.ArgumentConfig{
-								Type: graphql.Int,
-							},
+	queryType := graphql.NewObject(
+		graphql.ObjectConfig{
+			Name: "Query",
+			Fields: graphql.Fields{
+				"posts": &graphql.Field{
+					// Slice of User type which can be found in types.go
+					Type: graphql.NewList(Post),
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.Int,
 						},
-						Resolve: resolver.UserResolver,
 					},
+					Resolve: resolver.PostResolver,
 				},
 			},
-		),
+		},
+	)
+
+	mutationType := graphql.NewObject(graphql.ObjectConfig{
+		Name: "Mutation",
+		Fields: graphql.Fields {
+			"create": &graphql.Field{
+				Type: Post,
+				Description: "Create new post",
+				Args: graphql.FieldConfigArgument{
+					"title": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"content": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+			},
+			Resolve: resolver.PostResolver,
+			},
+		},
+	})
+
+	return &Root {
+		Query: queryType,
+		Mutation: mutationType,
 	}
-	return &root
 }
