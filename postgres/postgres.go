@@ -84,13 +84,13 @@ func (d *Db) GetPostByID(id int) []Post {
 // CreatePost is called within our creation mutation for graphql
 func (d *Db) CreatePost(post Post) {
 	// Prepare query, takes a name argument, protects from sql injection
-	stmt, err := d.Prepare("INSERT INTO posts (id, title, content, posted) VALUES ($1, $2, $3, $4)")
+	stmt, err := d.Prepare("INSERT INTO posts (title, content, posted) VALUES ($1, $2, $3)")
 	if err != nil {
 		fmt.Println("CreatePost Preparation Err: ", err)
 	}
 
 	// Make query with our stmt, passing in name argument
-	_, err = stmt.Exec(post.ID, post.Title, post.Content, post.Posted)
+	_, err = stmt.Exec(post.Title, post.Content, post.Posted)
 	if err != nil {
 		fmt.Println("GetPostByID Exec Err: ", err)
 	}

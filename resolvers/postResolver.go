@@ -28,7 +28,6 @@ func (r *Resolver) PostResolver(params graphql.ResolveParams) (interface{}, erro
 // PostCreationResolver resolves the query and creates the row in the db
 func (r *Resolver) PostCreationResolver(params graphql.ResolveParams) (interface {}, error) {
 	post := postgres.Post{
-		ID: 2,
 		Title: params.Args["title"].(string),
 		Content: params.Args["content"].(string),
 		Posted: time.Now(),
