@@ -9,7 +9,7 @@ import (
 
 // Root struct holds a pointer to our graphQL object
 type Root struct {
-	Query *graphql.Object
+	Query    *graphql.Object
 	Mutation *graphql.Object
 }
 
@@ -37,9 +37,9 @@ func NewRoot(db *postgres.Db) *Root {
 
 	mutationType := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Mutation",
-		Fields: graphql.Fields {
+		Fields: graphql.Fields{
 			"create": &graphql.Field{
-				Type: Post,
+				Type:        Post,
 				Description: "Create new post",
 				Args: graphql.FieldConfigArgument{
 					"title": &graphql.ArgumentConfig{
@@ -48,14 +48,14 @@ func NewRoot(db *postgres.Db) *Root {
 					"content": &graphql.ArgumentConfig{
 						Type: graphql.String,
 					},
-			},
-			Resolve: resolver.PostCreationResolver,
+				},
+				Resolve: resolver.PostCreationResolver,
 			},
 		},
 	})
 
-	return &Root {
-		Query: queryType,
+	return &Root{
+		Query:    queryType,
 		Mutation: mutationType,
 	}
 }
