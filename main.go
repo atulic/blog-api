@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"graphql-api/gql"
-	"graphql-api/postgres"
-	"graphql-api/server"
+	"github.com/atulic/blog-api/gql"
+	"github.com/atulic/blog-api/postgres"
+	"github.com/atulic/blog-api/server"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"

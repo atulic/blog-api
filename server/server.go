@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"graphql-api/gql"
+	"github.com/atulic/blog-api/gql"
 
 	"github.com/go-chi/render"
 	"github.com/graphql-go/graphql"

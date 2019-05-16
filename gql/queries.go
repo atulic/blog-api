@@ -1,7 +1,7 @@
 package gql
 
 import (
-	"graphql-api/postgres"
+	"github.com/atulic/blog-api/postgres"
 
 	"github.com/graphql-go/graphql"
 )
