@@ -3,7 +3,7 @@ settings:
     force: false
     interval: 0s
 schema:
-- name: go-graphql-api
+- name: blog-api
   path: .
   commands:
     run:

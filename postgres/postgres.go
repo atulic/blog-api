@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	// postgres driver
 	_ "github.com/lib/pq"
@@ -29,6 +30,7 @@ func New(connString string) (*Db, error) {
 	return &Db{db}, nil
 }
 
+// BuildDbConnString builds the connection string to the db given a set of params
 func BuildDbConnString(host string, port int, user string, password string, dbName string) string {
 	return fmt.Sprintf(
 		"host=%s port=%d user=%s password = %s dbname=%s sslmode=disable",
@@ -41,7 +43,7 @@ type Post struct {
 	ID      int
 	Title   string
 	Content string
-	Posted  string
+	Posted  time.Time
 }
 
 // GetPostByID is called within our post query for graphql
@@ -77,4 +79,21 @@ func (d *Db) GetPostByID(id int) []Post {
 	}
 
 	return posts
+}
+
+// CreatePost is called within our creation mutation for graphql
+func (d *Db) CreatePost(post Post) {
+	// Prepare query, takes a name argument, protects from sql injection
+	stmt, err := d.Prepare("INSERT INTO posts (id, title, content, posted) VALUES ($1, $2, $3, $4)")
+	if err != nil {
+		fmt.Println("CreatePost Preparation Err: ", err)
+	}
+
+	// Make query with our stmt, passing in name argument
+	_, err = stmt.Exec(post.ID, post.Title, post.Content, post.Posted)
+	if err != nil {
+		fmt.Println("GetPostByID Exec Err: ", err)
+	}
+
+	return
 }
