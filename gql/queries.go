@@ -2,6 +2,7 @@ package gql
 
 import (
 	"github.com/atulic/blog-api/postgres"
+	"github.com/atulic/blog-api/resolvers"
 
 	"github.com/graphql-go/graphql"
 )
@@ -14,7 +15,7 @@ type Root struct {
 
 // NewRoot returns base query type. This is where we add all the base queries
 func NewRoot(db *postgres.Db) *Root {
-	resolver := Resolver{db: db}
+	resolver := resolvers.Resolver{Db: db}
 
 	queryType := graphql.NewObject(
 		graphql.ObjectConfig{
