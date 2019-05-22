@@ -22,7 +22,10 @@ As we are using go modules, simply run `go build` inside the cloned directory. T
 #### Querying an existing record:
 ```
 {
- "query": "{posts(id:1){id, content}}"
+  posts(id:1) {
+    title
+    content
+  }
 }
 ```
 

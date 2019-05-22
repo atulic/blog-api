@@ -17,6 +17,7 @@ type Db struct {
 // returns it, otherwise returns the error
 func New(connString string) (*Db, error) {
 	db, err := sql.Open("postgres", connString)
+	
 	if err != nil {
 		return nil, err
 	}
