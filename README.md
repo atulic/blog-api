@@ -17,6 +17,11 @@ Then run `realize start` to start the development server.
 
 As we are using go modules, simply run `go build` inside the cloned directory. This will download required dependencies and build.
 
+
+#### To run in Docker
+
+Make sure you have `docker`, and `docker-compose` installed. Then, just run `docker-compose up --build`, which will create a container with our Postgres db, and one with our API. The API will expose port 4000 on your host machine.
+
 ### Queries and Mutations Examples
 
 #### Querying an existing record:
