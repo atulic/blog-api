@@ -16,3 +16,21 @@ Then run `realize start` to start the development server.
 #### To build:
 
 As we are using go modules, simply run `go build` inside the cloned directory. This will download required dependencies and build.
+
+### Queries and Mutations Examples
+
+#### Querying an existing record:
+```
+{
+ "query": "{posts(id:1){id, content}}"
+}
+```
+
+#### Creating a new record:
+```
+mutation {
+  create(title: "How to create new posts", content: "Using GraphQL mutations") {
+    title
+  }
+}
+```
