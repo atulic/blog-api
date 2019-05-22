@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Immediately exits if any error occurs during the script
-# execution. If not set, an error could occur and the
-# script would continue its execution.
+# execution. 
 set -o errexit
 
 
@@ -46,7 +45,7 @@ Aborting."
 
 
 # Performs the initialization in the already-started PostgreSQL
-# using the preconfigured POSTGRE_USER user.
+# using the preconfigured POSTGRES_USER user.
 init_user_and_db() {
   psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
      CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';
@@ -55,6 +54,7 @@ init_user_and_db() {
 EOSQL
 }
 
+# Create the iniital table for storing of posts
 init_table() {
   psql -v ON_ERROR_STOP=1 --username "$DB_USER" --dbname "$DB_DATABASE" <<-EOSQL
       CREATE TABLE posts (
