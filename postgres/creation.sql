@@ -1,6 +1,0 @@
-CREATE TABLE posts (
-  id serial PRIMARY KEY,
-  title VARCHAR NOT NULL,
-  content VARCHAR NOT NULL,
-  posted TIMESTAMP WITH TIME ZONE NOT NULL
-);

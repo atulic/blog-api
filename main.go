@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/atulic/blog-api/gql"
 	"github.com/atulic/blog-api/postgres"
@@ -25,17 +26,29 @@ func main() {
 	log.Fatal(http.ListenAndServe(":4000", router))
 }
 
+// openDbConnection creates a new connection to our pg database
+func openDbConnection() (db *postgres.Db) {
+	log.Print("Attempting to connect")
+	db, err := postgres.New(
+		postgres.BuildDbConnString("db", 5432, "postgres", "password", "go_graphql_db"),
+	)
+
+	// Keep trying to connect every 5s until there are no errors, then return the connection
+	if err != nil {
+		log.Print(err)
+		log.Print("Could not connect to Postgres. Waiting 5s before trying again...")
+		time.Sleep(5 * time.Second)
+		openDbConnection()
+	}
+
+	return db
+}
+
 func initializeAPI() (*chi.Mux, *postgres.Db) {
 	// Create a new router
 	router := chi.NewRouter()
 
-	// Create a new connection to our pg database
-	db, err := postgres.New(
-		postgres.BuildDbConnString("localhost", 5432, "postgres", "password", "go_graphql_db"),
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := openDbConnection()
 
 	// Create our root query for graphql
 	rootQuery := gql.NewRoot(db)

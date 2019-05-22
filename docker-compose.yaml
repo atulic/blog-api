@@ -1,0 +1,20 @@
+version: '3.2'
+
+services:
+  db:
+    build: ./postgres
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - "DB_USER=atulic"
+      - "DB_PASSWORD=password"
+      - "DB_DATABASE=go_graphql_db"
+      - "POSTGRES_PASSWORD=password"
+
+  api:
+    build: .
+    links:
+      - db
+    ports:
+      - "4000:4000"
