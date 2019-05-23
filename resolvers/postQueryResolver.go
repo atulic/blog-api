@@ -11,8 +11,8 @@ type Resolver struct {
 	Db *postgres.Db
 }
 
-// PostResolver resolves the query through a call to the db
-func (r *Resolver) PostResolver(params graphql.ResolveParams) (interface{}, error) {
+// PostQueryResolver resolves the query through a call to the db
+func (r *Resolver) PostQueryResolver(params graphql.ResolveParams) (interface{}, error) {
 	// Strip the id from arguments and assert type
 	name, ok := params.Args["id"].(int)
 	if ok {

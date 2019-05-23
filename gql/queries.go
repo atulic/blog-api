@@ -29,7 +29,7 @@ func NewRoot(db *postgres.Db) *Root {
 							Type: graphql.Int,
 						},
 					},
-					Resolve: resolver.PostResolver,
+					Resolve: resolver.PostQueryResolver,
 				},
 			},
 		},
@@ -50,6 +50,32 @@ func NewRoot(db *postgres.Db) *Root {
 					},
 				},
 				Resolve: resolver.PostCreationResolver,
+			},
+			"update": &graphql.Field{
+				Type:        Post,
+				Description: "Update post by id",
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"title": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+					"content": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+				},
+				Resolve: resolver.PostUpdateResolver,
+			},
+			"delete": &graphql.Field{
+				Type:        Post,
+				Description: "Delete post by id",
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+				},
+				Resolve: resolver.PostDeleteResolver,
 			},
 		},
 	})

@@ -17,7 +17,7 @@ type Db struct {
 // returns it, otherwise returns the error
 func New(connString string) (*Db, error) {
 	db, err := sql.Open("postgres", connString)
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,41 @@ func (d *Db) CreatePost(post Post) {
 	// Make query with our stmt, passing in name argument
 	_, err = stmt.Exec(post.Title, post.Content, post.Posted)
 	if err != nil {
-		fmt.Println("GetPostByID Exec Err: ", err)
+		fmt.Println("CreatePost Exec Err: ", err)
+	}
+
+	return
+}
+
+// UpdatePost is called within our update mutation for graphql
+func (d *Db) UpdatePost(post Post) {
+	// Prepare query, takes a name argument, protects from sql injection
+	stmt, err := d.Prepare("UPDATE posts SET title = $2, content = $3, posted = $4 WHERE id = $1")
+	if err != nil {
+		fmt.Println("UpdatePost Preparation Err: ", err)
+	}
+
+	// Make query with our stmt, passing in name argument
+	_, err = stmt.Exec(post.ID, post.Title, post.Content, post.Posted)
+	if err != nil {
+		fmt.Println("UpdatePost Exec Err: ", err)
+	}
+
+	return
+}
+
+// DeletePost is called within our update mutation for graphql
+func (d *Db) DeletePost(id int) {
+	// Prepare query, takes a name argument, protects from sql injection
+	stmt, err := d.Prepare("DELETE FROM posts WHERE id = $1")
+	if err != nil {
+		fmt.Println("UpdatePost Preparation Err: ", err)
+	}
+
+	// Make query with our stmt, passing in name argument
+	_, err = stmt.Exec(id)
+	if err != nil {
+		fmt.Println("UpdatePost Exec Err: ", err)
 	}
 
 	return
