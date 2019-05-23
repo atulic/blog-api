@@ -14,8 +14,8 @@ type Root struct {
 }
 
 // NewRoot returns base query type. This is where we add all the base queries
-func NewRoot(db *postgres.Db) *Root {
-	resolver := resolvers.Resolver{Db: db}
+func NewRoot(db postgres.Repository) *Root {
+	resolver := resolvers.Resolver{Repository: db}
 
 	queryType := graphql.NewObject(
 		graphql.ObjectConfig{

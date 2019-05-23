@@ -28,7 +28,7 @@ func main() {
 }
 
 // openDbConnection creates a new connection to our postgres database
-func openDbConnection() (db *postgres.Db) {
+func openDbConnection() (db *postgres.DbConnection) {
 	db, err := postgres.New(
 		postgres.BuildDbConnString("db", 5432, "postgres", "password", "go_graphql_db"),
 	)
@@ -44,14 +44,16 @@ func openDbConnection() (db *postgres.Db) {
 	return db
 }
 
-func initializeAPI() (*chi.Mux, *postgres.Db) {
+func initializeAPI() (*chi.Mux, *postgres.DbConnection) {
 	// Create a new router
 	router := chi.NewRouter()
 
 	db := openDbConnection()
 
+	repository := postgres.NewPostgresRepository(db.DB)
+
 	// Create our root query for graphql
-	rootQuery := gql.NewRoot(db)
+	rootQuery := gql.NewRoot(repository)
 
 	// Create a new graphql schema, passing in the the root query
 	sc, err := graphql.NewSchema(
@@ -68,7 +70,7 @@ func initializeAPI() (*chi.Mux, *postgres.Db) {
 		GqlSchema: &sc,
 	}
 
-	// Basic CORS
+	// Basic configuration for CORS middleware. Allows all origins for development purposes.
 	cors := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST"},
@@ -81,7 +83,7 @@ func initializeAPI() (*chi.Mux, *postgres.Db) {
 	// Add some middleware to our router
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON),
-		cors.Handler,
+		cors.Handler,				// handle cross-origin requests 
 		middleware.Logger,          // log api request calls
 		middleware.DefaultCompress, // compress results, mostly gzipping assets and json
 		middleware.StripSlashes,    // match paths with a trailing slash, strip it, and continue routing through the mux

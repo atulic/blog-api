@@ -9,13 +9,20 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type Db struct {
+// DbConnection represents a SQL connection to the db
+type DbConnection struct {
 	*sql.DB
+}
+
+// NewPostgresRepository takes a database connection and
+// returns our repository
+func NewPostgresRepository(Conn *sql.DB) Repository {
+	return &DbConnection{Conn}
 }
 
 // New makes a new database using the connection string and
 // returns it, otherwise returns the error
-func New(connString string) (*Db, error) {
+func New(connString string) (*DbConnection, error) {
 	db, err := sql.Open("postgres", connString)
 
 	if err != nil {
@@ -28,7 +35,7 @@ func New(connString string) (*Db, error) {
 		return nil, err
 	}
 
-	return &Db{db}, nil
+	return &DbConnection{db}, nil
 }
 
 // BuildDbConnString builds the connection string to the db given a set of params
@@ -39,7 +46,7 @@ func BuildDbConnString(host string, port int, user string, password string, dbNa
 	)
 }
 
-// Post shape
+// Post model
 type Post struct {
 	ID      int
 	Title   string
@@ -47,15 +54,15 @@ type Post struct {
 	Posted  time.Time
 }
 
-// GetPostByID is called within our post query for graphql
-func (d *Db) GetPostByID(id int) []Post {
-	// Prepare query, takes a name argument, protects from sql injection
+// GetByID is called within our post query for graphql
+func (d *DbConnection) GetByID(id int) []Post {
+	// Prepare query, takes a id argument, protects from sql injection
 	stmt, err := d.Prepare("SELECT * FROM posts WHERE id=$1")
 	if err != nil {
 		fmt.Println("GetPostByID Preparation Err: ", err)
 	}
 
-	// Make query with our stmt, passing in name argument
+	// Make query with our stmt, passing in id argument
 	rows, err := stmt.Query(id)
 	if err != nil {
 		fmt.Println("GetPostByID Query Err: ", err)
@@ -82,8 +89,8 @@ func (d *Db) GetPostByID(id int) []Post {
 	return posts
 }
 
-// CreatePost is called within our creation mutation for graphql
-func (d *Db) CreatePost(post Post) {
+// Create a new record in the DB with an auto-incrementing ID
+func (d *DbConnection) Create(post Post) {
 	// Prepare query, takes a name argument, protects from sql injection
 	stmt, err := d.Prepare("INSERT INTO posts (title, content, posted) VALUES ($1, $2, $3)")
 	if err != nil {
@@ -99,8 +106,8 @@ func (d *Db) CreatePost(post Post) {
 	return
 }
 
-// UpdatePost is called within our update mutation for graphql
-func (d *Db) UpdatePost(post Post) {
+// Update the post in the DB where the ID matches
+func (d *DbConnection) Update(post Post) {
 	// Prepare query, takes a name argument, protects from sql injection
 	stmt, err := d.Prepare("UPDATE posts SET title = $2, content = $3, posted = $4 WHERE id = $1")
 	if err != nil {
@@ -116,8 +123,8 @@ func (d *Db) UpdatePost(post Post) {
 	return
 }
 
-// DeletePost is called within our update mutation for graphql
-func (d *Db) DeletePost(id int) {
+// Delete a post from the DB with a given ID
+func (d *DbConnection) Delete(id int) {
 	// Prepare query, takes a name argument, protects from sql injection
 	stmt, err := d.Prepare("DELETE FROM posts WHERE id = $1")
 	if err != nil {

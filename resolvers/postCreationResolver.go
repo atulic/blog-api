@@ -16,7 +16,7 @@ func (r *Resolver) PostCreationResolver(params graphql.ResolveParams) (interface
 		Posted:  time.Now(),
 	}
 
-	r.Db.CreatePost(post)
+	r.Repository.Create(post)
 
 	return post, nil
 }

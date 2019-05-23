@@ -6,5 +6,5 @@ import (
 
 // Resolver struct holds the connection to our postgres db
 type Resolver struct {
-	Db *postgres.Db
+	Repository postgres.Repository
 }

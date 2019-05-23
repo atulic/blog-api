@@ -17,7 +17,7 @@ func (r *Resolver) PostUpdateResolver(params graphql.ResolveParams) (interface{}
 		Posted:  time.Now(),
 	}
 
-	r.Db.UpdatePost(post)
+	r.Repository.Update(post)
 
 	return post, nil
 }

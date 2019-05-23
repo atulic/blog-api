@@ -9,7 +9,7 @@ func (r *Resolver) PostDeleteResolver(params graphql.ResolveParams) (interface{}
 
 	id := params.Args["id"].(int)
 
-	r.Db.DeletePost(id)
+	r.Repository.Delete(id)
 
 	return id, nil
 }
