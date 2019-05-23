@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
 	"github.com/graphql-go/graphql"
 )
@@ -26,7 +27,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":4000", router))
 }
 
-// openDbConnection creates a new connection to our pg database
+// openDbConnection creates a new connection to our postgres database
 func openDbConnection() (db *postgres.Db) {
 	db, err := postgres.New(
 		postgres.BuildDbConnString("db", 5432, "postgres", "password", "go_graphql_db"),
@@ -51,7 +52,7 @@ func initializeAPI() (*chi.Mux, *postgres.Db) {
 
 	// Create our root query for graphql
 	rootQuery := gql.NewRoot(db)
-	
+
 	// Create a new graphql schema, passing in the the root query
 	sc, err := graphql.NewSchema(
 		graphql.SchemaConfig{Query: rootQuery.Query, Mutation: rootQuery.Mutation},
@@ -67,9 +68,20 @@ func initializeAPI() (*chi.Mux, *postgres.Db) {
 		GqlSchema: &sc,
 	}
 
+	// Basic CORS
+	cors := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+	})
+
 	// Add some middleware to our router
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON),
+		cors.Handler,
 		middleware.Logger,          // log api request calls
 		middleware.DefaultCompress, // compress results, mostly gzipping assets and json
 		middleware.StripSlashes,    // match paths with a trailing slash, strip it, and continue routing through the mux

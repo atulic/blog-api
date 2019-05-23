@@ -36,8 +36,7 @@ check_env_vars_set() {
       echo "Error:
     Environment variable '$required_env_var' not set.
     Make sure you have the following environment variables set:
-      ${REQUIRED_ENV_VARS[@]}
-Aborting."
+      ${REQUIRED_ENV_VARS[@]} Aborting."
       exit 1
     fi
   done

@@ -1,15 +1,8 @@
 package resolvers
 
 import (
-	"github.com/atulic/blog-api/postgres"
-
 	"github.com/graphql-go/graphql"
 )
-
-// Resolver struct holds the connection to our postgres db
-type Resolver struct {
-	Db *postgres.Db
-}
 
 // PostQueryResolver resolves the query through a call to the db
 func (r *Resolver) PostQueryResolver(params graphql.ResolveParams) (interface{}, error) {
