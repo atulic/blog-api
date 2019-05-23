@@ -9,7 +9,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// DbConnection represents a SQL connection to the db
+// DbConnection represents a SQL connection to the db. 
+// Used to interact with the real database
 type DbConnection struct {
 	*sql.DB
 }
@@ -55,7 +56,7 @@ type Post struct {
 }
 
 // GetByID is called within our post query for graphql
-func (d *DbConnection) GetByID(id int) []Post {
+func (d *DbConnection) GetByID(id int) ([]Post, error) {
 	// Prepare query, takes a id argument, protects from sql injection
 	stmt, err := d.Prepare("SELECT * FROM posts WHERE id=$1")
 	if err != nil {
@@ -86,11 +87,11 @@ func (d *DbConnection) GetByID(id int) []Post {
 		posts = append(posts, r)
 	}
 
-	return posts
+	return posts, err
 }
 
 // Create a new record in the DB with an auto-incrementing ID
-func (d *DbConnection) Create(post Post) {
+func (d *DbConnection) Create(post Post)(error) {
 	// Prepare query, takes a name argument, protects from sql injection
 	stmt, err := d.Prepare("INSERT INTO posts (title, content, posted) VALUES ($1, $2, $3)")
 	if err != nil {
@@ -103,11 +104,11 @@ func (d *DbConnection) Create(post Post) {
 		fmt.Println("CreatePost Exec Err: ", err)
 	}
 
-	return
+	return err
 }
 
 // Update the post in the DB where the ID matches
-func (d *DbConnection) Update(post Post) {
+func (d *DbConnection) Update(post Post)(error) {
 	// Prepare query, takes a name argument, protects from sql injection
 	stmt, err := d.Prepare("UPDATE posts SET title = $2, content = $3, posted = $4 WHERE id = $1")
 	if err != nil {
@@ -120,11 +121,11 @@ func (d *DbConnection) Update(post Post) {
 		fmt.Println("UpdatePost Exec Err: ", err)
 	}
 
-	return
+	return err
 }
 
 // Delete a post from the DB with a given ID
-func (d *DbConnection) Delete(id int) {
+func (d *DbConnection) Delete(id int) error {
 	// Prepare query, takes a name argument, protects from sql injection
 	stmt, err := d.Prepare("DELETE FROM posts WHERE id = $1")
 	if err != nil {
@@ -137,5 +138,5 @@ func (d *DbConnection) Delete(id int) {
 		fmt.Println("UpdatePost Exec Err: ", err)
 	}
 
-	return
+	return err
 }

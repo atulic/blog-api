@@ -9,8 +9,8 @@ func (r *Resolver) PostQueryResolver(params graphql.ResolveParams) (interface{},
 	// Strip the id from arguments and assert type
 	name, ok := params.Args["id"].(int)
 	if ok {
-		posts := r.Repository.GetByID(name)
-		return posts, nil
+		posts, err := r.Repository.GetByID(name)
+		return posts, err
 	}
 
 	return nil, nil
