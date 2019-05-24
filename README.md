@@ -1,6 +1,6 @@
 ### Getting Started
 
-The following makes the assumption that Go is already installed on your machine. To verify, run `go version`.
+The following makes the assumption that Go is already installed on your machine. To verify, run `go version`. Alternatively, we can run in a Docker container.
 
 The server will run by default on localhost:4000.
 
