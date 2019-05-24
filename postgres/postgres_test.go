@@ -3,17 +3,24 @@ package postgres
 import (
 	"testing"
 	"time"
+	"database/sql"
 
-	"github.com/stretchr/testify/assert"
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestGetPostsByID(t *testing.T) {
+func setupMocks(t *testing.T) (*sql.DB, sqlmock.Sqlmock, error) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
+	return db, mock, err
+}
+
+func TestGetPostsByID(t *testing.T) {
+
+	db, mock, err := setupMocks(t)
 	defer db.Close()
 
 	now := time.Now()
@@ -28,15 +35,81 @@ func TestGetPostsByID(t *testing.T) {
 
 	repository := NewPostgresRepository(db) // passes the mock to our code
 
-	expectedPost := Post {
-		ID: 1,
-		Title: "title 1",
+	expectedPost := Post{
+		ID:      1,
+		Title:   "title 1",
 		Content: "Content 1",
-		Posted: now,
+		Posted:  now,
 	}
-	
+
 	actualPost, err := repository.GetByID(3)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, actualPost)
 	assert.ObjectsAreEqual(expectedPost, actualPost)
+}
+
+func TestCreatePost(t *testing.T) {
+	db, mock, err := setupMocks(t)
+	defer db.Close()
+
+	now := time.Now()
+
+	post := Post{
+		ID:      1,
+		Title:   "title 1",
+		Content: "Content 1",
+		Posted:  now,
+	}
+
+	query := "INSERT INTO posts"
+	mock.ExpectPrepare(query).ExpectExec().WithArgs(post.Title, post.Content, post.Posted).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	repository := NewPostgresRepository(db) // passes the mock to our code
+
+	err = repository.Create(post)
+	assert.NoError(t, err)
+}
+
+func TestUpdatePost(t *testing.T) {
+	db, mock, err := setupMocks(t)
+	defer db.Close()
+
+	now := time.Now()
+
+	post := Post{
+		ID:      1,
+		Title:   "title 1",
+		Content: "Content 1",
+		Posted:  now,
+	}
+
+	query := "UPDATE posts"
+	mock.ExpectPrepare(query).ExpectExec().WithArgs(post.ID, post.Title, post.Content, post.Posted).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	repository := NewPostgresRepository(db) // passes the mock to our code
+
+	err = repository.Update(post)
+	assert.NoError(t, err)
+}
+
+func TestDeletePost(t *testing.T) {
+	db, mock, err := setupMocks(t)
+	defer db.Close()
+
+	now := time.Now()
+
+	post := Post{
+		ID:      1,
+		Title:   "title 1",
+		Content: "Content 1",
+		Posted:  now,
+	}
+
+	query := "DELETE FROM posts"
+	mock.ExpectPrepare(query).ExpectExec().WithArgs(post.ID).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	repository := NewPostgresRepository(db) // passes the mock to our code
+
+	err = repository.Delete(post.ID)
+	assert.NoError(t, err)
 }
