@@ -3,13 +3,14 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 
 	// postgres driver
 	_ "github.com/lib/pq"
 )
 
-// DbConnection represents a SQL connection to the db. 
+// DbConnection represents a SQL connection to the db.
 // Used to interact with the real database
 type DbConnection struct {
 	*sql.DB
@@ -30,11 +31,18 @@ func New(connString string) (*DbConnection, error) {
 		return nil, err
 	}
 
-	// Check that our connection is good
+	// Check that our connection is good, if not try again
 	err = db.Ping()
+
+	// Keep trying to connect every 5s until there are no errors
 	if err != nil {
-		return nil, err
+		db.Close()
+		log.Println("Could not connect to remote PostgreSQL database. Waiting 5s before trying again.")
+		time.Sleep(time.Second * 5)
+		return New(connString)
 	}
+
+	log.Println("REST API web service successfully connected to remote PostgreSQL database.")
 
 	return &DbConnection{db}, nil
 }
@@ -91,7 +99,7 @@ func (d *DbConnection) GetByID(id int) ([]Post, error) {
 }
 
 // Create a new record in the DB with an auto-incrementing ID
-func (d *DbConnection) Create(post Post)(error) {
+func (d *DbConnection) Create(post Post) error {
 	// Prepare query, takes a name argument, protects from sql injection
 	stmt, err := d.Prepare("INSERT INTO posts (title, content, posted) VALUES ($1, $2, $3)")
 	if err != nil {
@@ -108,7 +116,7 @@ func (d *DbConnection) Create(post Post)(error) {
 }
 
 // Update the post in the DB where the ID matches
-func (d *DbConnection) Update(post Post)(error) {
+func (d *DbConnection) Update(post Post) error {
 	// Prepare query, takes a name argument, protects from sql injection
 	stmt, err := d.Prepare("UPDATE posts SET title = $2, content = $3, posted = $4 WHERE id = $1")
 	if err != nil {

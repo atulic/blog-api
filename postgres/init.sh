@@ -56,7 +56,7 @@ EOSQL
 # Create the iniital table for storing of posts
 init_table() {
   psql -v ON_ERROR_STOP=1 --username "$DB_USER" --dbname "$DB_DATABASE" <<-EOSQL
-      CREATE TABLE posts (
+      CREATE TABLE IF NOT EXISTS posts (
         id serial PRIMARY KEY,
         title VARCHAR NOT NULL,
         content VARCHAR NOT NULL,

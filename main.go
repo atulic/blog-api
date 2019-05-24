@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/atulic/blog-api/gql"
 	"github.com/atulic/blog-api/postgres"
@@ -33,12 +32,8 @@ func openDbConnection() (db *postgres.DbConnection) {
 		postgres.BuildDbConnString("db", 5432, "postgres", "password", "go_graphql_db"),
 	)
 
-	// Keep trying to connect every 5s until there are no errors, then return the connection
 	if err != nil {
-		log.Print(err)
-		log.Print("Could not connect to Postgres. Waiting 5s before trying again...")
-		time.Sleep(5 * time.Second)
-		openDbConnection()
+		return nil
 	}
 
 	return db
@@ -83,7 +78,7 @@ func initializeAPI() (*chi.Mux, *postgres.DbConnection) {
 	// Add some middleware to our router
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON),
-		cors.Handler,				// handle cross-origin requests 
+		cors.Handler,               // handle cross-origin requests
 		middleware.Logger,          // log api request calls
 		middleware.DefaultCompress, // compress results, mostly gzipping assets and json
 		middleware.StripSlashes,    // match paths with a trailing slash, strip it, and continue routing through the mux
