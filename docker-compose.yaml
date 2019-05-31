@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   db:
-    build: ./postgres
+    build: ./server/postgres
     restart: always
     ports:
       - '5432:5432'
@@ -13,7 +13,7 @@ services:
       - "POSTGRES_PASSWORD=password"
 
   api:
-    build: .
+    build: ./server/
     restart: always
     depends_on:
       - "db"
