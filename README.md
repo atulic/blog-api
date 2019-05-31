@@ -14,7 +14,7 @@ Then run `realize start` to start the development server.
 
 #### To build:
 
-As we are using go modules, simply run `go build` inside the cloned directory. This will download required dependencies and build.
+As we are using go modules, simply run `go build` inside the cloned directory. This will download required dependencies and generate an executable binary file.
 
 #### To run in Docker
 
