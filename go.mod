@@ -3,8 +3,9 @@ module github.com/atulic/blog-api
 go 1.12
 
 require (
+	bou.ke/monkey v1.0.1 // indirect
 	github.com/DATA-DOG/go-sqlmock v1.3.3
-	github.com/bxcodec/go-clean-arch v2.0.1+incompatible // indirect
+	github.com/bouk/monkey v1.0.1
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-chi/cors v1.0.0
 	github.com/go-chi/render v1.0.1
