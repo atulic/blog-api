@@ -71,11 +71,13 @@ func (d *DbConnection) GetByID(id int) (Post, error) {
 		fmt.Println("GetPostByID Preparation Err: ", err)
 	}
 
+	
+	// Create Post struct for holding each row's data
+	var post Post
+
 	// Make query with our stmt, passing in id argument
 	row := stmt.QueryRow(id)
 
-	// Create Post struct for holding each row's data
-	var post Post
 	// Create slice of Posts for our response
 	// Copy the columns from row into the values pointed at by r (User)
 	err = row.Scan(
@@ -84,6 +86,13 @@ func (d *DbConnection) GetByID(id int) (Post, error) {
 		&post.Content,
 		&post.Posted,
 	)
+
+	// If there is no row found, log the error
+	if err == sql.ErrNoRows {
+		fmt.Println("No rows found for id", id)
+		return post, nil
+	}
+	
 	if err != nil {
 		fmt.Println("Error scanning rows: ", err)
 	}
