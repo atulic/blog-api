@@ -1,12 +1,13 @@
 package gql
 
 import (
+	"testing"
+	"time"
+
 	mock "github.com/atulic/blog-api/mocks"
 	"github.com/atulic/blog-api/postgres"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 
 	"github.com/graphql-go/graphql"
 )
@@ -43,11 +44,14 @@ func TestFetchPost(t *testing.T) {
 		graphql.SchemaConfig{Query: rootQuery.Query, Mutation: rootQuery.Mutation},
 	)
 
-	assert.NoError(t, err)
-
 	r := ExecuteQuery(fetchPostQuery, sc)
 
-	expected := map[string]interface{}{"posts": map[string]interface{}{"content": "Expected Content", "id": 1, "posted": now, "title": "Expected Title"}}
+	expected := map[string]interface{}{
+		"posts": map[string]interface{}{
+			"id":      mockPost.ID,
+			"content": mockPost.Content,
+			"posted":  mockPost.Posted.String(),
+			"title":   mockPost.Title}}
 
 	assert.NoError(t, err)
 	assert.Empty(t, r.Errors)
