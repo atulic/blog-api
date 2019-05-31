@@ -1,9 +1,8 @@
 package resolvers
 
 import (
-	"time"
-
 	"github.com/atulic/blog-api/postgres"
+	time "github.com/atulic/blog-api/shared"
 
 	"github.com/graphql-go/graphql"
 )
