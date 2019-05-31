@@ -18,6 +18,14 @@ func setupMocks(t *testing.T) (*sql.DB, sqlmock.Sqlmock, error) {
 	return db, mock, err
 }
 
+
+func TestBuildsConnectionString(t *testing.T){
+	dbStringExpected := "host=localhost port=4000 user=user password = password dbname=db_name sslmode=disable"
+	dbStringActual := BuildDbConnString("localhost", 4000, "user", "password", "db_name")
+
+	assert.Equal(t, dbStringExpected, dbStringActual, "The connection string matches the expected")
+}
+
 func TestGetPostsByID(t *testing.T) {
 
 	db, mock, err := setupMocks(t)
@@ -111,5 +119,5 @@ func TestDeletePost(t *testing.T) {
 	repository := NewPostgresRepository(db) // passes the mock to our code
 
 	err = repository.Delete(post.ID)
-	assert.NoError(t, err)
+	assert.Empty(t, err)
 }

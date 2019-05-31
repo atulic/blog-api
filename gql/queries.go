@@ -22,8 +22,7 @@ func NewRoot(db postgres.Repository) *Root {
 			Name: "Query",
 			Fields: graphql.Fields{
 				"posts": &graphql.Field{
-					// Slice of User type which can be found in types.go
-					Type: graphql.NewList(Post),
+					Type: Post,
 					Args: graphql.FieldConfigArgument{
 						"id": &graphql.ArgumentConfig{
 							Type: graphql.Int,

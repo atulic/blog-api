@@ -64,7 +64,7 @@ type Post struct {
 }
 
 // GetByID is called within our post query for graphql
-func (d *DbConnection) GetByID(id int) ([]Post, error) {
+func (d *DbConnection) GetByID(id int) (Post, error) {
 	// Prepare query, takes a id argument, protects from sql injection
 	stmt, err := d.Prepare("SELECT * FROM posts WHERE id=$1")
 	if err != nil {
@@ -72,30 +72,23 @@ func (d *DbConnection) GetByID(id int) ([]Post, error) {
 	}
 
 	// Make query with our stmt, passing in id argument
-	rows, err := stmt.Query(id)
-	if err != nil {
-		fmt.Println("GetPostByID Query Err: ", err)
-	}
+	row := stmt.QueryRow(id)
 
 	// Create Post struct for holding each row's data
-	var r Post
+	var post Post
 	// Create slice of Posts for our response
-	posts := []Post{}
 	// Copy the columns from row into the values pointed at by r (User)
-	for rows.Next() {
-		err = rows.Scan(
-			&r.ID,
-			&r.Title,
-			&r.Content,
-			&r.Posted,
-		)
-		if err != nil {
-			fmt.Println("Error scanning rows: ", err)
-		}
-		posts = append(posts, r)
+	err = row.Scan(
+		&post.ID,
+		&post.Title,
+		&post.Content,
+		&post.Posted,
+	)
+	if err != nil {
+		fmt.Println("Error scanning rows: ", err)
 	}
 
-	return posts, err
+	return post, err
 }
 
 // Create a new record in the DB with an auto-incrementing ID
