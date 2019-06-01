@@ -1,11 +1,11 @@
-version: '3.2'
+version: "3.7"
 
 services:
   db:
     build: ./server/postgres
     restart: always
     ports:
-      - '5432:5432'
+      - "5432:5432"
     environment:
       - "DB_USER=atulic"
       - "DB_PASSWORD=password"
@@ -14,6 +14,8 @@ services:
 
   api:
     build: ./server/
+    volumes:
+      - ./server:/src
     restart: always
     depends_on:
       - "db"
