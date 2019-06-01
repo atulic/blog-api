@@ -7,10 +7,11 @@ import (
 )
 
 // ExecuteQuery builds and runs the GraphQL queries
-func ExecuteQuery(query string, schema graphql.Schema) *graphql.Result {
+func ExecuteQuery(query string, variables map[string]interface{}, schema graphql.Schema) *graphql.Result {
 	result := graphql.Do(graphql.Params{
-		Schema:        schema,
-		RequestString: query,
+		Schema:         schema,
+		RequestString:  query,
+		VariableValues: variables,
 	})
 
 	// Error check

@@ -1,11 +1,7 @@
 import gql from "graphql-tag";
 import React from "react";
 import {Query} from "react-apollo";
-
-type Post = {
-  title: string;
-  content: string;
-};
+import {Post} from "./types";
 
 interface Data {
   posts: Post[];

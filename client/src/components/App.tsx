@@ -1,9 +1,14 @@
 import React from "react";
 import "../styles/App.css";
-import { BlogPost } from "./BlogPost";
+import {BlogPost} from "./BlogPost";
+import {CreateBlogPost} from "./CreateBlogPost";
 
 const App: React.FC = () => {
-  return <BlogPost />;
+    return (
+        <>
+            <CreateBlogPost/>
+            <BlogPost/>
+        </>);
 };
 
 export default App;
