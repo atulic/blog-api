@@ -1,11 +1,11 @@
 package postgres
 
 import (
+	"database/sql"
 	"testing"
 	"time"
-	"database/sql"
 
-	sqlmock "github.com/DATA-DOG/go-sqlmock"
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,8 +18,7 @@ func setupMocks(t *testing.T) (*sql.DB, sqlmock.Sqlmock, error) {
 	return db, mock, err
 }
 
-
-func TestBuildsConnectionString(t *testing.T){
+func TestBuildsConnectionString(t *testing.T) {
 	dbStringExpected := "host=localhost port=4000 user=user password = password dbname=db_name sslmode=disable"
 	dbStringActual := BuildDbConnString("localhost", 4000, "user", "password", "db_name")
 
@@ -27,7 +26,6 @@ func TestBuildsConnectionString(t *testing.T){
 }
 
 func TestGetPostsByID(t *testing.T) {
-
 	db, mock, err := setupMocks(t)
 	defer db.Close()
 
@@ -43,17 +41,48 @@ func TestGetPostsByID(t *testing.T) {
 
 	repository := NewPostgresRepository(db) // passes the mock to our code
 
-	expectedPost := Post{
-		ID:      1,
-		Title:   "title 1",
-		Content: "Content 1",
-		Posted:  now,
+	expectedPost := []Post{
+		{
+			ID:      3,
+			Title:   "title 1",
+			Content: "Content 1",
+			Posted:  now,
+		},
 	}
 
 	actualPost, err := repository.GetByID(3)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, actualPost)
-	assert.ObjectsAreEqual(expectedPost, actualPost)
+	assert.Equal(t, expectedPost, actualPost)
+}
+
+func TestGetAllPosts(t *testing.T) {
+	db, mock, err := setupMocks(t)
+	defer db.Close()
+
+	now := time.Now()
+
+	rows := sqlmock.NewRows([]string{"id", "title", "content", "posted"}).
+		AddRow(3, "title 1", "Content 1", now)
+
+	query := "SELECT \\* FROM posts"
+	prep := mock.ExpectPrepare(query)
+
+	prep.ExpectQuery().WillReturnRows(rows)
+
+	repository := NewPostgresRepository(db) // passes the mock to our code
+
+	expectedPost := []Post{
+		{
+			ID:      3,
+			Title:   "title 1",
+			Content: "Content 1",
+			Posted:  now,
+		},
+	}
+
+	actualPost, err := repository.GetAllPosts()
+	assert.NoError(t, err)
+	assert.Equal(t, expectedPost, actualPost)
 }
 
 func TestCreatePost(t *testing.T) {
@@ -64,7 +93,7 @@ func TestCreatePost(t *testing.T) {
 
 	post := Post{
 		ID:      1,
-		Title:   "title 1",
+		Title:   "Title 1",
 		Content: "Content 1",
 		Posted:  now,
 	}
@@ -72,7 +101,7 @@ func TestCreatePost(t *testing.T) {
 	query := "INSERT INTO posts"
 	mock.ExpectPrepare(query).ExpectExec().WithArgs(post.Title, post.Content, post.Posted).WillReturnResult(sqlmock.NewResult(1, 1))
 
-	repository := NewPostgresRepository(db) // passes the mock to our code
+	repository := NewPostgresRepository(db)
 
 	err = repository.Create(post)
 	assert.NoError(t, err)

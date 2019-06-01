@@ -3,7 +3,7 @@ module github.com/atulic/blog-api
 go 1.12
 
 require (
-	bou.ke/monkey v1.0.1 // indirect
+	bou.ke/monkey v1.0.1
 	github.com/DATA-DOG/go-sqlmock v1.3.3
 	github.com/bouk/monkey v1.0.1
 	github.com/go-chi/chi v4.0.2+incompatible

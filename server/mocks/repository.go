@@ -34,10 +34,10 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // GetByID mocks base method
-func (m *MockRepository) GetByID(id int) (postgres.Post, error) {
+func (m *MockRepository) GetByID(id int) ([]postgres.Post, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", id)
-	ret0, _ := ret[0].(postgres.Post)
+	ret0, _ := ret[0].([]postgres.Post)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -46,6 +46,21 @@ func (m *MockRepository) GetByID(id int) (postgres.Post, error) {
 func (mr *MockRepositoryMockRecorder) GetByID(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockRepository)(nil).GetByID), id)
+}
+
+// GetAllPosts mocks base method
+func (m *MockRepository) GetAllPosts() ([]postgres.Post, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllPosts")
+	ret0, _ := ret[0].([]postgres.Post)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllPosts indicates an expected call of GetAllPosts
+func (mr *MockRepositoryMockRecorder) GetAllPosts() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllPosts", reflect.TypeOf((*MockRepository)(nil).GetAllPosts))
 }
 
 // Update mocks base method

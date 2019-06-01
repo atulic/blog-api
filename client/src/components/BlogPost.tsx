@@ -1,33 +1,38 @@
 import gql from "graphql-tag";
 import React from "react";
-import { Query } from "react-apollo";
+import {Query} from "react-apollo";
+
+type Post = {
+  title: string;
+  content: string;
+};
 
 interface Data {
-  posts: {
-    title: string;
-    content: string;
-  };
+  posts: Post[];
 }
 
 const POST_QUERY = gql`
   {
-    posts(id: 1) {
+    posts {
       title
       content
     }
   }
 `;
 
-export const BlogPost: React.FC = props => (
+export const BlogPost: React.FC = () => (
   <Query<Data> query={POST_QUERY}>
     {({ loading, error, data }) => {
       if (loading) return <div>Fetching...</div>;
       if (error) return <div>Errored</div>;
       return (
-        <>
-          <div>{data && data.posts.title}</div>
-          <div>{data && data.posts.content}</div>
-        </>
+          data &&
+          data.posts.map(post => (
+              <>
+                <div>{post.title}</div>
+                <div>{post.content}</div>
+              </>
+          ))
       );
     }}
   </Query>

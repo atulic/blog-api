@@ -22,7 +22,7 @@ func NewRoot(db postgres.Repository) *Root {
 			Name: "Query",
 			Fields: graphql.Fields{
 				"posts": &graphql.Field{
-					Type: Post,
+					Type: graphql.NewList(Post),
 					Args: graphql.FieldConfigArgument{
 						"id": &graphql.ArgumentConfig{
 							Type: graphql.Int,

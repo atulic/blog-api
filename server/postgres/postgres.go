@@ -64,14 +64,13 @@ type Post struct {
 }
 
 // GetByID is called within our post query for graphql
-func (d *DbConnection) GetByID(id int) (Post, error) {
+func (d *DbConnection) GetByID(id int) ([]Post, error) {
 	// Prepare query, takes a id argument, protects from sql injection
 	stmt, err := d.Prepare("SELECT * FROM posts WHERE id=$1")
 	if err != nil {
 		fmt.Println("GetPostByID Preparation Err: ", err)
 	}
 
-	
 	// Create Post struct for holding each row's data
 	var post Post
 
@@ -87,17 +86,56 @@ func (d *DbConnection) GetByID(id int) (Post, error) {
 		&post.Posted,
 	)
 
+	posts := []Post{}
+
 	// If there is no row found, log the error
 	if err == sql.ErrNoRows {
 		fmt.Println("No rows found for id", id)
-		return post, nil
+		return append(posts, post), nil
 	}
-	
+
 	if err != nil {
 		fmt.Println("Error scanning rows: ", err)
 	}
 
-	return post, err
+	return append(posts, post), err
+}
+
+// GetAllPosts is called if we query posts without any params
+func (d *DbConnection) GetAllPosts() ([]Post, error) {
+	// Prepare query, takes a id argument, protects from sql injection
+	stmt, err := d.Prepare("SELECT * FROM posts")
+	if err != nil {
+		fmt.Println("GetAllPosts Preparation Err: ", err)
+	}
+
+	// Create Post struct for holding each row's data
+	var post Post
+
+	// Slice to hold all of our posts we are getting back
+	posts := []Post{}
+
+	// Make query with our stmt, passing in id argument
+	rows, err := stmt.Query()
+
+	for rows.Next() {
+		err = rows.Scan(
+			&post.ID,
+			&post.Title,
+			&post.Content,
+			&post.Posted,
+		)
+		if err != nil {
+			fmt.Println("Error scanning rows: ", err)
+		}
+		posts = append(posts, post)
+	}
+
+	if err != nil {
+		fmt.Println("Error scanning rows: ", err)
+	}
+
+	return posts, err
 }
 
 // Create a new record in the DB with an auto-incrementing ID

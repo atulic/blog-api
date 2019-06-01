@@ -7,7 +7,7 @@ import (
 	mock "github.com/atulic/blog-api/mocks"
 	"github.com/atulic/blog-api/postgres"
 
-	"github.com/bouk/monkey"
+	"bou.ke/monkey"
 	"github.com/golang/mock/gomock"
 	"github.com/graphql-go/graphql"
 	"github.com/stretchr/testify/assert"
@@ -29,12 +29,7 @@ func TestFetchPost(t *testing.T) {
 		}
 	  }`
 
-	mockPost := postgres.Post{
-		ID:      1,
-		Title:   "Expected Title",
-		Content: "Expected Content",
-		Posted:  time.Now(),
-	}
+	mockPosts := createMockPostSlice()
 
 	// Create a new mock controller, which manages
 	// our mock objects and their expectations
@@ -45,7 +40,7 @@ func TestFetchPost(t *testing.T) {
 
 	// Ensure our mock repository is called once with the
 	// expected params and set the mocks return value
-	mockRepository.EXPECT().GetByID(1).Return(mockPost, nil).Times(1)
+	mockRepository.EXPECT().GetByID(1).Return(mockPosts, nil).Times(1)
 
 	rootQuery := NewRoot(mockRepository)
 
@@ -55,16 +50,59 @@ func TestFetchPost(t *testing.T) {
 
 	r := ExecuteQuery(fetchPostQuery, sc)
 
-	expected := map[string]interface{}{
-		"posts": map[string]interface{}{
-			"id":      mockPost.ID,
-			"content": mockPost.Content,
-			"posted":  mockPost.Posted.String(),
-			"title":   mockPost.Title}}
+	newExpected := map[string]interface{}{
+		"posts": []interface{}{map[string]interface{}{
+			"content": mockPosts[0].Content,
+			"id":      mockPosts[0].ID,
+			"posted":  mockPosts[0].Posted.String(),
+			"title":   mockPosts[0].Title}}}
 
 	assert.NoError(t, err)
 	assert.False(t, r.HasErrors())
-	assert.Equal(t, expected, r.Data)
+	assert.Equal(t, newExpected, r.Data)
+}
+
+func TestGetAllPosts(t *testing.T) {
+	fetchPostQuery := `{
+		posts {
+		  id
+		  title
+		  content
+		  posted
+		}
+	  }`
+
+	mockPosts := createMockPostSlice()
+
+	// Create a new mock controller, which manages
+	// our mock objects and their expectations
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepository := mock.NewMockRepository(ctrl)
+
+	// Ensure our mock repository is called once with the
+	// expected params and set the mocks return value
+	mockRepository.EXPECT().GetAllPosts().Return(mockPosts, nil).Times(1)
+
+	rootQuery := NewRoot(mockRepository)
+
+	sc, err := graphql.NewSchema(
+		graphql.SchemaConfig{Query: rootQuery.Query, Mutation: rootQuery.Mutation},
+	)
+
+	r := ExecuteQuery(fetchPostQuery, sc)
+
+	newExpected := map[string]interface{}{
+		"posts": []interface{}{map[string]interface{}{
+			"content": mockPosts[0].Content,
+			"id":      mockPosts[0].ID,
+			"posted":  mockPosts[0].Posted.String(),
+			"title":   mockPosts[0].Title}}}
+
+	assert.NoError(t, err)
+	assert.False(t, r.HasErrors())
+	assert.Equal(t, newExpected, r.Data)
 }
 
 func TestCreatePost(t *testing.T) {
@@ -185,5 +223,14 @@ func TestUpdatePost(t *testing.T) {
 	assert.NoError(t, err)
 	assert.False(t, r.HasErrors())
 	assert.Equal(t, expectedResult, r.Data)
+}
 
+func createMockPostSlice() []postgres.Post {
+	return []postgres.Post{{
+		ID:      1,
+		Title:   "Expected Title",
+		Content: "Expected Content",
+		Posted:  time.Now(),
+	},
+	}
 }
