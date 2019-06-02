@@ -48,7 +48,7 @@ func TestFetchPost(t *testing.T) {
 		graphql.SchemaConfig{Query: rootQuery.Query, Mutation: rootQuery.Mutation},
 	)
 
-	r := ExecuteQuery(fetchPostQuery, sc)
+	r := ExecuteQuery(fetchPostQuery, nil, sc)
 
 	newExpected := map[string]interface{}{
 		"posts": []interface{}{map[string]interface{}{
@@ -91,7 +91,7 @@ func TestGetAllPosts(t *testing.T) {
 		graphql.SchemaConfig{Query: rootQuery.Query, Mutation: rootQuery.Mutation},
 	)
 
-	r := ExecuteQuery(fetchPostQuery, sc)
+	r := ExecuteQuery(fetchPostQuery, nil, sc)
 
 	newExpected := map[string]interface{}{
 		"posts": []interface{}{map[string]interface{}{
@@ -137,7 +137,7 @@ func TestCreatePost(t *testing.T) {
 		graphql.SchemaConfig{Query: rootQuery.Query, Mutation: rootQuery.Mutation},
 	)
 
-	r := ExecuteQuery(createPostMutation, sc)
+	r := ExecuteQuery(createPostMutation, nil, sc)
 
 	expected := map[string]interface{}(
 		map[string]interface{}{
@@ -174,7 +174,7 @@ func TestDeletePost(t *testing.T) {
 		graphql.SchemaConfig{Query: rootQuery.Query, Mutation: rootQuery.Mutation},
 	)
 
-	r := ExecuteQuery(deletePostMutation, sc)
+	r := ExecuteQuery(deletePostMutation, nil, sc)
 
 	assert.NoError(t, err)
 	assert.False(t, r.HasErrors())
@@ -212,7 +212,7 @@ func TestUpdatePost(t *testing.T) {
 		graphql.SchemaConfig{Query: rootQuery.Query, Mutation: rootQuery.Mutation},
 	)
 
-	r := ExecuteQuery(updatePostMutation, sc)
+	r := ExecuteQuery(updatePostMutation, nil, sc)
 
 	expectedResult := map[string]interface{}(
 		map[string]interface{}{

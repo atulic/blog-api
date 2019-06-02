@@ -104,7 +104,7 @@ func (d *DbConnection) GetByID(id int) ([]Post, error) {
 // GetAllPosts is called if we query posts without any params
 func (d *DbConnection) GetAllPosts() ([]Post, error) {
 	// Prepare query, takes a id argument, protects from sql injection
-	stmt, err := d.Prepare("SELECT * FROM posts")
+	stmt, err := d.Prepare("SELECT * FROM posts ORDER BY id DESC")
 	if err != nil {
 		fmt.Println("GetAllPosts Preparation Err: ", err)
 	}
