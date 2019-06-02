@@ -1,36 +1,46 @@
-import {gql} from "apollo-boost";
 import * as React from "react";
 import {useState} from "react";
-import {Post} from "./types";
 import Mutation from "react-apollo/Mutation";
-
-const POST_MUTATION = gql`
-    mutation ($title: String!, $content: String!) {
-        create(title: $title, content: $content) {
-      id
-    }
-  }`;
+import {POST_QUERY} from "../queries/fetchPostQuery";
+import {POST_MUTATION} from "../mutations/createPostMutation";
+import {CreatePost, CreatePost_create} from "../mutations/types/CreatePost";
+import {FetchPosts} from "../queries/types/FetchPosts";
 
 export const CreateBlogPost: React.FC = () => {
-    const [post, setPost] = useState<Post>({title: "", content: ""});
+    const [post, setPost] = useState<Partial<CreatePost_create>>({title: "", content: ""});
     return (
         <div>
             <div>
                 <input
-                    value={post.title}
+                    value={post.title as string}
                     onChange={e => setPost({title: e.target.value, content: post.content})}
                     type="text"
                     placeholder="Insert a post title"
                 />
                 <input
                     className="mb2"
-                    value={post.content}
+                    value={post.content as string}
                     onChange={e => setPost({title: post.title, content: e.target.value})}
                     type="text"
                     placeholder="Some content for the post"
                 />
             </div>
-            <Mutation<Post, Post> mutation={POST_MUTATION} variables={{title: post.title, content: post.content}}>
+            <Mutation<CreatePost, Partial<CreatePost_create>>
+                mutation={POST_MUTATION}
+                variables={{title: post.title, content: post.content}}
+                update={(store, { data }) => {
+                    if (!data || !data.create) {
+                        return;
+                    }
+
+                    const previous: FetchPosts | null= store.readQuery({ query: POST_QUERY });
+                    previous && previous.posts && previous.posts.unshift(data.create);
+
+                    store.writeQuery({
+                        query: POST_QUERY,
+                        data: previous
+                    });
+                }}>
                 {postMutation => <button onClick={postMutation as any}>Submit</button>}
             </Mutation>
         </div>
