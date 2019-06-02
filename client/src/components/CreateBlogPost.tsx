@@ -13,7 +13,11 @@ export const CreateBlogPost: React.FC = () => {
     content: ""
   });
 
-  const textFieldStyle = { paddingLeft: "5px", paddingRight: "5px" };
+  const textFieldStyle = {
+    marginLeft: "5px",
+    marginRight: "5px"
+  };
+
   return (
     <Grid>
       <TextField
@@ -23,6 +27,7 @@ export const CreateBlogPost: React.FC = () => {
           setPost({ title: e.target.value, content: post.content })
         }
         type="text"
+        label="Post Title"
         placeholder="Insert a post title"
         style={textFieldStyle}
       />
@@ -31,7 +36,8 @@ export const CreateBlogPost: React.FC = () => {
         margin="normal"
         onChange={e => setPost({ title: post.title, content: e.target.value })}
         type="text"
-        placeholder="Some content for the post"
+        label="Post Content"
+        placeholder="Insert some content"
         style={textFieldStyle}
       />
 
@@ -58,7 +64,7 @@ export const CreateBlogPost: React.FC = () => {
           <Button
             variant="contained"
             onClick={postMutation as any}
-            style={{ margin: "10px" }}
+            style={{ margin: "20px 10px" }}
           >
             Submit
           </Button>
