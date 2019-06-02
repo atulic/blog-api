@@ -12,6 +12,8 @@ export const CreateBlogPost: React.FC = () => {
     title: "",
     content: ""
   });
+
+  const textFieldStyle = { paddingLeft: "5px", paddingRight: "5px" };
   return (
     <Grid>
       <TextField
@@ -22,6 +24,7 @@ export const CreateBlogPost: React.FC = () => {
         }
         type="text"
         placeholder="Insert a post title"
+        style={textFieldStyle}
       />
       <TextField
         value={post.content as string}
@@ -29,6 +32,7 @@ export const CreateBlogPost: React.FC = () => {
         onChange={e => setPost({ title: post.title, content: e.target.value })}
         type="text"
         placeholder="Some content for the post"
+        style={textFieldStyle}
       />
 
       <Mutation<CreatePost, Partial<CreatePost_create>>
