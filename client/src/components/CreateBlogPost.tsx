@@ -8,7 +8,7 @@ import { FetchPosts } from "../queries/types/FetchPosts";
 import { Button, Grid, TextField } from "@material-ui/core";
 
 export const CreateBlogPost: React.FC = () => {
-  const [post, setPost] = useState<Partial<CreatePost_create>>({
+  const [post, setPost] = useState<Omit<CreatePost_create, "__typename">>({
     title: "",
     content: ""
   });
@@ -41,7 +41,7 @@ export const CreateBlogPost: React.FC = () => {
         style={textFieldStyle}
       />
 
-      <Mutation<CreatePost, Partial<CreatePost_create>>
+      <Mutation<CreatePost, Omit<CreatePost_create, "__typename">>
         mutation={POST_MUTATION}
         variables={{ title: post.title, content: post.content }}
         update={(store, { data }) => {
@@ -52,6 +52,7 @@ export const CreateBlogPost: React.FC = () => {
           const previous: FetchPosts | null = store.readQuery({
             query: POST_QUERY
           });
+
           previous && previous.posts && previous.posts.unshift(data.create);
 
           store.writeQuery({
