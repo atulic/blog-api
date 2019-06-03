@@ -66,7 +66,7 @@ func initializeAPI() (*chi.Mux, *postgres.DbConnection) {
 	}
 
 	// Basic configuration for CORS middleware. Allows all origins for development purposes.
-	cors := cors.New(cors.Options{
+	corsConfig := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
@@ -78,7 +78,7 @@ func initializeAPI() (*chi.Mux, *postgres.DbConnection) {
 	// Add some middleware to our router
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON),
-		cors.Handler,               // handle cross-origin requests
+		corsConfig.Handler,         // handle cross-origin requests
 		middleware.Logger,          // log api request calls
 		middleware.DefaultCompress, // compress results, mostly gzipping assets and json
 		middleware.StripSlashes,    // match paths with a trailing slash, strip it, and continue routing through the mux

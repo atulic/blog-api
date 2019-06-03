@@ -86,7 +86,7 @@ func (d *DbConnection) GetByID(id int) ([]Post, error) {
 		&post.Posted,
 	)
 
-	posts := []Post{}
+	var posts []Post
 
 	// If there is no row found, log the error
 	if err == sql.ErrNoRows {
@@ -113,10 +113,13 @@ func (d *DbConnection) GetAllPosts() ([]Post, error) {
 	var post Post
 
 	// Slice to hold all of our posts we are getting back
-	posts := []Post{}
+	var posts []Post
 
-	// Make query with our stmt, passing in id argument
 	rows, err := stmt.Query()
+
+	if err != nil {
+		fmt.Println("Error scanning rows: ", err)
+	}
 
 	for rows.Next() {
 		err = rows.Scan(
@@ -131,10 +134,6 @@ func (d *DbConnection) GetAllPosts() ([]Post, error) {
 		posts = append(posts, post)
 	}
 
-	if err != nil {
-		fmt.Println("Error scanning rows: ", err)
-	}
-
 	return posts, err
 }
 
@@ -146,7 +145,7 @@ func (d *DbConnection) Create(post Post) error {
 		fmt.Println("CreatePost Preparation Err: ", err)
 	}
 
-	// Make query with our stmt, passing in name argument
+	// Make query with our stmt, passing in Post arguments
 	_, err = stmt.Exec(post.Title, post.Content, post.Posted)
 	if err != nil {
 		fmt.Println("CreatePost Exec Err: ", err)
@@ -163,7 +162,6 @@ func (d *DbConnection) Update(post Post) error {
 		fmt.Println("UpdatePost Preparation Err: ", err)
 	}
 
-	// Make query with our stmt, passing in name argument
 	_, err = stmt.Exec(post.ID, post.Title, post.Content, post.Posted)
 	if err != nil {
 		fmt.Println("UpdatePost Exec Err: ", err)
@@ -180,7 +178,6 @@ func (d *DbConnection) Delete(id int) error {
 		fmt.Println("UpdatePost Preparation Err: ", err)
 	}
 
-	// Make query with our stmt, passing in name argument
 	_, err = stmt.Exec(id)
 	if err != nil {
 		fmt.Println("UpdatePost Exec Err: ", err)
