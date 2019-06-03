@@ -47,6 +47,7 @@
     "apollo": "^2.12.5",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.13.2",
-    "prettier": "^1.17.1"
+    "prettier": "^1.17.1",
+    "waait": "^1.0.4"
   }
 }
