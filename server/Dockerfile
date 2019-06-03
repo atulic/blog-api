@@ -16,5 +16,6 @@ EXPOSE 4000
 
 RUN ["go", "get", "github.com/githubnemo/CompileDaemon"]
 
-# Run the compiled binary.
+# Use CompileDaemon to run the app and rebuild on any file changes.
+# We already mounted our working directory in the docker-compose file.
 ENTRYPOINT CompileDaemon -log-prefix=false -command="./blog-api"
