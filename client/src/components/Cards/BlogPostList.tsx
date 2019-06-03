@@ -18,7 +18,7 @@ export const BlogPostList: React.FC = () => {
           data &&
           data.posts &&
           data.posts.map((post, i) => (
-            <BlogCard id={i} post={post as FetchPosts_posts} />
+            <BlogCard key={i} post={post as FetchPosts_posts} />
           ));
 
         return (

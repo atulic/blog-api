@@ -15,7 +15,6 @@ import React from "react";
 import { FetchPosts_posts } from "../../queries/types/FetchPosts";
 
 interface BlogCardProps {
-  id: number;
   post: FetchPosts_posts;
 }
 
@@ -38,7 +37,7 @@ export const BlogCard: React.FC<BlogCardProps> = props => {
 
   return (
     <Grid item xs={12} sm={6} md={4}>
-      <Card key={props.id}>
+      <Card>
         <Box className={classes.iconContainer}>
           <IconButton aria-label="Delete">
             <DeleteIcon fontSize="small" />
