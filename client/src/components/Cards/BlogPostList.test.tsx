@@ -5,7 +5,6 @@ import { POST_QUERY } from "../../queries/fetchPostQuery";
 import { FetchPosts } from "../../queries/types/FetchPosts";
 import { Loading } from "../Loading";
 import { BlogPostList } from "./BlogPostList";
-import wait from "waait";
 import { BlogCard } from "./BlogCard";
 
 let wrapper: ReactWrapper;
@@ -31,6 +30,7 @@ const mocks: ReadonlyArray<MockedResponse> = [
 
 describe("The BlogPostList Component", () => {
   beforeEach(() => {
+    jest.useFakeTimers();
     wrapper = mount(
       <MockedProvider mocks={mocks} addTypename={true}>
         <BlogPostList />
@@ -43,7 +43,7 @@ describe("The BlogPostList Component", () => {
   });
 
   it("renders the Blog Card and passes the result of the query", async () => {
-    await wait(0); // need to wait until next tick of event loop before MockedProvider resolves our data
+    jest.runOnlyPendingTimers();
     wrapper.update();
 
     expect(wrapper.find(BlogCard).props().post).toEqual(mockPosts!.posts![0]);
