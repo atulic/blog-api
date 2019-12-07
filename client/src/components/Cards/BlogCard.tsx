@@ -44,9 +44,9 @@ export const BlogCard: React.FC<BlogCardProps> = props => {
           </IconButton>
         </Box>
         <CardContent className={classes.content}>
-          <Typography variant="h5">{props.post && props.post.title}</Typography>
+          <Typography variant="h5">{props.post?.title}</Typography>
           <Typography variant="body1">
-            {props.post && props.post.content}
+            {props.post?.content}
           </Typography>
         </CardContent>
         <CardActions>

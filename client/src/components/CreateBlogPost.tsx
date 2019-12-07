@@ -53,7 +53,7 @@ export const CreateBlogPost: React.FC = () => {
             query: POST_QUERY
           });
 
-          previous && previous.posts && previous.posts.unshift(data.create);
+          previous?.posts?.unshift(data.create);
 
           store.writeQuery({
             query: POST_QUERY,
