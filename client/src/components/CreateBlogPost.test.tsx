@@ -20,8 +20,6 @@ describe("the CreateBlogPost component", () => {
       .find(TextField)
       .map(field => field.props().label);
 
-    console.log(wrapper.debug());
-
     expect(inputTitles).toEqual(["Post Title", "Post Content"]);
   });
 });
